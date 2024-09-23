@@ -32,12 +32,12 @@ const userReducer = userStore.reducer
 const fetchLogin = (loginForm) => {
   return async (dispatch) => {
     // 1 发送异步请求
-    const res = request.post('/authorizations', loginForm)
+    const res = await request.post('/authorizations', loginForm)
 
     // 2 提交同步action进行token的存入
     // 执行setToken()得到一个action对象，并将后端返回的数据作为action对象的实参
     // 这样可以将token存入useStore里面的token
-    dispatch(setToken((await res).data.token))
+    dispatch(setToken(res.data.token))
 
   }
 }
