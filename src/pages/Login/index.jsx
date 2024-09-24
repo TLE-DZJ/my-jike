@@ -16,7 +16,6 @@ const Login = () => {
     navigate('/')
     // 2 提示用户
     message.success('登录成功')
-
   }
   return (
     <div className="login">

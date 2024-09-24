@@ -23,7 +23,7 @@ const userStore = createSlice({
   }
 })
 
-// 解构出actionCreater
+// 解构出actionCreator
 
 const { setToken } = userStore.actions
 
