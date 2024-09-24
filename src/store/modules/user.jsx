@@ -1,7 +1,7 @@
 // 和用户相关的状态管理
 
 import { createSlice } from "@reduxjs/toolkit"
-import { request } from "@/utils"
+import { request, setToken as _setToken, getToken } from "@/utils"
 
 const userStore = createSlice({
   name: 'user',
@@ -9,7 +9,7 @@ const userStore = createSlice({
   initialState: {
     // token由后端接口返回的数据类型决定，这里后端返回一个字符串
     // 判断本地存储是否有，有就直接用
-    token: localStorage.getItem('token_key') || ''
+    token: getToken() || ''
   },
   // 同步修改方法
   reducers: {
@@ -18,7 +18,7 @@ const userStore = createSlice({
       state.token = action.payload
 
       // token持久化，localstorage存一份
-      localStorage.setItem('token_key', action.payload)
+      _setToken(action.payload)
     }
   }
 })
