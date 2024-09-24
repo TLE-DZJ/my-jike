@@ -8,13 +8,17 @@ const userStore = createSlice({
   // 数据状态
   initialState: {
     // token由后端接口返回的数据类型决定，这里后端返回一个字符串
-    token: ''
+    // 判断本地存储是否有，有就直接用
+    token: localStorage.getItem('token_key') || ''
   },
   // 同步修改方法
   reducers: {
     // action为修改的描述对象
     setToken(state, action) {
       state.token = action.payload
+
+      // token持久化，localstorage存一份
+      localStorage.setItem('token_key', action.payload)
     }
   }
 })
