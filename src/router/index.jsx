@@ -19,7 +19,8 @@ const router = createBrowserRouter([
     // 二级路由为Layout下面的子路由
     children: [
       {
-        path: 'home',
+        // 设置默认路由
+        index: true,
         element: <Home />
       },
       {
