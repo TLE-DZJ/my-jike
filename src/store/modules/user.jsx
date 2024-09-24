@@ -9,7 +9,10 @@ const userStore = createSlice({
   initialState: {
     // token由后端接口返回的数据类型决定，这里后端返回一个字符串
     // 判断本地存储是否有，有就直接用
-    token: getToken() || ''
+    token: getToken() || '',
+
+    // 新增用户信息：
+    userInfo: {}
   },
   // 同步修改方法
   reducers: {
@@ -19,13 +22,16 @@ const userStore = createSlice({
 
       // token持久化，localstorage存一份
       _setToken(action.payload)
+    },
+    setUserInfo(state, action) {
+      state.userInfo = action.payload
     }
   }
 })
 
 // 解构出actionCreator
 
-const { setToken } = userStore.actions
+const { setToken, setUserInfo } = userStore.actions
 
 // 获取reducer函数
 const userReducer = userStore.reducer
@@ -46,6 +52,14 @@ const fetchLogin = (loginForm) => {
   }
 }
 
+// 获取个人用户信息异步方法
+const fetchUserInfo = () => {
+  return async (dispatch) => {
+    // 接口调用
+    const res = await request.get('/user/profile')
+    dispatch(setUserInfo(res.data))
+  }
+}
 
-export { fetchLogin, setToken }
+export { fetchLogin, fetchUserInfo, setToken }
 export default userReducer
