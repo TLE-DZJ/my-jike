@@ -1,7 +1,8 @@
 // axios的封装管理
 
 import axios from "axios";
-import { getToken } from ".";
+import { getToken, removeToken } from ".";
+import router from "@/router";
 
 
 // 1 根域名配置和超时时间
@@ -34,6 +35,13 @@ request.interceptors.response.use((response)=> {
 }, (error)=> {
   // 超出 2xx 范围的状态码都会触发该函数。
   // 对响应错误做点什么
+  
+  // 监控401
+  console.dir(error)
+  if(error.response.status === 401) {
+    removeToken()
+    router.navigate('/login')
+  }
   return Promise.reject(error)
 })
 
