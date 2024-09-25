@@ -1,22 +1,22 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Card, Breadcrumb, Form, Button, Radio, DatePicker, Select } from 'antd'
 
 // 该语言包为汉化，时间选择器为中文
 import locale from 'antd/es/date-picker/locale/zh_CN'
 
-import { Table, Tag, Space } from 'antd'
+import { Table, Tag, Space, Popconfirm } from 'antd'
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import img404 from '@/assets/error.png'
 import { useChannel } from '@/hooks/useChannel'
 import Item from 'antd/es/list/Item'
 import { useEffect, useState } from 'react'
-import { getArticleListAPI } from '@/apis/article'
+import { delArticleAPI, getArticleListAPI } from '@/apis/article'
 
 const { Option } = Select
 const { RangePicker } = DatePicker
 
 const Article = () => {
-
+  const navigate = useNavigate()
   const { channelList } = useChannel()
 
   // 准备列数据
@@ -67,13 +67,25 @@ const Article = () => {
       render: data => {
         return (
           <Space size="middle">
-            <Button type="primary" shape="circle" icon={<EditOutlined />} />
-            <Button
+            <Button type="primary" shape="circle" icon={<EditOutlined />} 
+            onClick={() => navigate(`/publish?id=${data.id}`)}/>
+
+            {/* 将删除的Button包裹在Popconfirm中 */}
+            <Popconfirm
+              title="删除文章"
+              description="确认要删除当前文章吗?"
+              onConfirm={() => onConfirm(data)}
+              okText="Yes"
+              cancelText="No"
+            >
+              <Button
               type="primary"
               danger
               shape="circle"
               icon={<DeleteOutlined />}
             />
+            </Popconfirm>
+            
           </Space>
         )
       }
@@ -143,6 +155,16 @@ const Article = () => {
       page
     })
   }
+
+  // 删除
+  const onConfirm = async (data) => {
+    console.log('删除点击了', data)
+    await delArticleAPI(data.id)
+    setReqData({
+      ...reqData,
+    })
+  }
+
 
   return (
     <div>
