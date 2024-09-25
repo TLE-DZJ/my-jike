@@ -75,9 +75,27 @@ const Publish = () => {
     // 1 通过id获取数据
     async function getArticleDetail() {
       const res = await getArticleById(articleId)
-      form.setFieldsValue(res.data)
+      const data = res.data 
+      const { cover } = data
+      form.setFieldsValue({
+        ...data,
+        type: cover.type
+      })
+      // 为什么无法回填封面：
+      // 数据结构不同：set方法 -> {type: 3}  {cover: {type: 3}}
+
+      // 回填图片列表
+      setImageType(cover.type)
+      // 显示图片({url:url})
+      setImageList(cover.images.map(url => {
+        return { url }
+      }))
     }
-     // 2 调用实例方法 完成回填
+    // 2 调用实例方法 完成回填
+    // 有id才能调用
+    if(articleId) {
+      getArticleDetail()
+    }
     getArticleDetail()
   }, [articleId, form])
 
@@ -87,7 +105,7 @@ const Publish = () => {
         title={
           <Breadcrumb items={[
             { title: <Link to={'/'}>首页</Link> },
-            { title: '发布文章' },
+            { title: `${articleId ? '编辑' : '发布'}文章`},
           ]}
           />
         }
@@ -138,6 +156,7 @@ const Publish = () => {
               name='image'
               onChange={onChange}
               maxCount={imageType}
+              fileList={imageList}
             >
               <div style={{ marginTop: 8 }}>
                 <PlusOutlined />
