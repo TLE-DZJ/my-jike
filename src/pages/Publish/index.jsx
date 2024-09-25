@@ -23,7 +23,7 @@ const { Option } = Select
 const Publish = () => {
   // 获取频道列表
   const [channelList, setChannelList]= useState([])
-  // 
+  
   useEffect(() => {
     // 1 封装函数 调用接口
     const getChannelList = async () => {
