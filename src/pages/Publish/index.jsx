@@ -39,14 +39,17 @@ const Publish = () => {
   // 提交表单
   const onFinish = async (formValue) => {
     console.log(formValue)
+    if (imageType !== imageList.length) return message.warning('图片类型和数量不一致')
     const {title, content, channel_id } = formValue
     // 1 按照接口文档的格式处理收集到的表单数据
     const reqData = {
       title,
       content,
       cover: {
-        type: 0,
-        images: []
+        // type为当前的封面模式
+        // image为上传的图片列表
+        type: imageType,
+        images: imageList.map(item => item.response.data.url)
       },
       channel_id
     }
@@ -65,6 +68,13 @@ const Publish = () => {
     
   }
 
+  // 切换图片封面类型
+  const [imageType, setImageType] = useState(0)
+  const onTypeChange = (e) => {
+    console.log('切换图片类型', e.target.value)
+    setImageType(e.target.value)
+  }
+
   return (
     <div className="publish">
       <Card
@@ -79,7 +89,7 @@ const Publish = () => {
         <Form
           labelCol={{ span: 4 }}
           wrapperCol={{ span: 16 }}
-          initialValues={{ type: 1 }}
+          initialValues={{ type: 0 }}
           onFinish={onFinish}
         >
           <Form.Item
@@ -104,12 +114,14 @@ const Publish = () => {
           {/* 上传封面 */}
           <Form.Item label="封面">
             <Form.Item name="type">
-              <Radio.Group>
+              <Radio.Group onChange={onTypeChange}>
                 <Radio value={1}>单图</Radio>
                 <Radio value={3}>三图</Radio>
                 <Radio value={0}>无图</Radio>
               </Radio.Group>
             </Form.Item>
+
+            {imageType > 0 && 
             <Upload
               // listType：决定选择文件框的外观样式
               // showUploadList：控制显示上传列表
@@ -118,11 +130,12 @@ const Publish = () => {
               action={'http://geek.itheima.net/v1_0/upload'}
               name='image'
               onChange={onChange}
+              maxCount={imageType}
             >
               <div style={{ marginTop: 8 }}>
                 <PlusOutlined />
               </div>
-            </Upload>
+            </Upload>}
           </Form.Item>
 
           <Form.Item
