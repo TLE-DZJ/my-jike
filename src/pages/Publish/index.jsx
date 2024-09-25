@@ -16,7 +16,7 @@ import './index.scss'
 import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
 import { useEffect, useState } from 'react'
-import { createArticleAPI, getArticleById } from '@/apis/article'
+import { createArticleAPI, getArticleById, updateArticleAPI } from '@/apis/article'
 import { useChannel } from '@/hooks/useChannel'
 
 const { Option } = Select
@@ -26,7 +26,7 @@ const Publish = () => {
   const {channelList} = useChannel()
   
   // 提交表单
-  const onFinish = async (formValue) => {
+  const onFinish = (formValue) => {
     console.log(formValue)
     if (imageType !== imageList.length) return message.warning('图片类型和数量不一致')
     const {title, content, channel_id } = formValue
@@ -38,13 +38,27 @@ const Publish = () => {
         // type为当前的封面模式
         // image为上传的图片列表
         type: imageType,
-        images: imageList.map(item => item.response.data.url)
+        // 新增的图片的url在response的data里面
+        images: imageList.map(item => {
+          if(item.response){
+            return  item.response.data.url
+          }else {
+            return item.url
+          }
+        })
       },
       channel_id
     }
 
     // 2 调用接口提交
-    await createArticleAPI(reqData)
+    // 新增-新增接口 编辑状态-更新接口 有id就是编辑
+    if(articleId) {
+      // 更新接口
+      updateArticleAPI({...reqData, id: articleId})
+    } else {
+      createArticleAPI(reqData)
+    }
+    
     message.success('发布文章成功')
   }
 
